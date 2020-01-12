@@ -10,25 +10,45 @@
 
 ## **Ход выполнения:**
 
-- Попасть в систему без пароля несколькими способами:
+- **Попасть в систему без пароля несколькими способами:**
 
-#### Способ 1. init=/bin/sh
-В конце строки начинающейся с linux16 добавляем init=/bin/sh (т.е. сообщаем ядру запустить /bin/sh как первый процесс с PID=1)и нажимаем сtrl-x для загрузки в систему.
+*При выборе ядра для загрузки нажимаем **"E"**, попадаем в окно, где можем менять параметры загрузки:*
 
-![Screen 1.1](./jpg/1.1.jpg)
-![Screen 1.2](./jpg/1.2.jpg)
-![Screen 1.3](./jpg/1.3.jpg)
-    
-Перемонтируем корневую систему в режиме Read-Write с проверкой
-```bash
-    mount -o remount,rw /
-    mount | grep root
+### Способ 1. init=/bin/sh
+
+ В конце строки начинающейся с **linux** добавляем **init=/bin/sh** или **init=/bin/bash**и нажимаем **сtrl-x** для
+загрузки в систему
+
+
+![Screen 1.a](./screens/Screen_1_a.JPG)
+**1**
+![Screen 1.b](./screens/Screen_1_b.JPG)
+**2**
+![Screen 1.c](./screens/Screen_1_c.JPG)
+**3**
+
+*Корневая файловая система монтируется в режиме Read-Only. Для перемонтирования ее в
+режим Read-Write можно воспользоваться командой:*
 ```
+    mount -o remount,rw /
+```
+*Или же можно заменить в параметрах загрузки **ro** - *read only* на **rw** - *read-write*
 
-#### Способ 2. Через initrd, rd.break.
-rd.break -  даем инструкцию initrd запустить emergency mode и sh перед pivot_root()
-![Screen 2.1](./jpg/2.1.jpg)
+*Способы с **rd.break** и **rw init=/sysroot/bin/sh** в **Linux Mint** не работают
 
-Попадаем в emergency mode
+### Способ 2. systemd.unit=rescue.target
+В конце строки начинающейся с **linux** добавляем **systemd.unit=rescue.target** и нажимаем **сtrl-x** для
+загрузки в систему.
 
-![Screen 2.2](./jpg/2.2.jpg)
+![Screen 2.a](./screens/Screen_2_a.JPG)
+
+![Screen 2.b](./screens/Screen_2_b.JPG)
+
+
+
+### Способ 3. systemd.unit=emergency.target
+В конце строки начинающейся с **linux** добавляем **systemd.unit=emergency.target** и нажимаем **сtrl-x** для
+загрузки в систему.
+
+
+
