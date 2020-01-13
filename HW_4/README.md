@@ -62,19 +62,12 @@ Cмотрим текущее состояние системы и переиме
 
 ![Screen_4_a](./screens/Screen_4_a.JPG)
 
- 
-● Нас интересует втораā строка с именем Volume Group
-● Приступим к переименованиĀ:
-[root@otuslinux ~]# vgrename VolGroup00 OtusRoot
-Volume group "VolGroup00" successfully renamed to "OtusRoot"
-Установить систему с LVM, после чего переименовать VG
-● Далее правим [/etc/fstab](files/fstab), [/etc/default/grub](files/grub), [/boot/grub2/grub.cfg](files/grub.cfg) Везде заменāем старое
-название на новое. По ссýлкам можно увидетþ примерý получившихсā файлов.
-● Пересоздаем initrd image, чтобý он знал новое название Volume Group
-[root@otuslinux ~]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
-...
-*** Creating image file done ***
-*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+Правим [/etc/fstab](files/fstab), [/etc/default/grub](files/grub), [/boot/grub2/grub.cfg](files/grub.cfg) 
+Меняем название на новое. 
+Пересоздаем **initrd image**, чтобы он знал новое название Volume Group
+
+![Screen_4_b](./screens/Screen_4_b.JPG)
+
 ● После чего можем перезагружатþсā и если все сделано правилþно успешно грузимсā с
 новýм именем Volume Group и проверāем:
 [root@otuslinux ~]# vgs
