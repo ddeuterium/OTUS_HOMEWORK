@@ -20,11 +20,11 @@
 загрузки в систему
 
 
-![Screen 1.a](./screens/Screen_1_a.JPG)
+![Screen_1_a](./screens/Screen_1_a.JPG)
 **1**
-![Screen 1.b](./screens/Screen_1_b.JPG)
+![Screen_1_b](./screens/Screen_1_b.JPG)
 **2**
-![Screen 1.c](./screens/Screen_1_c.JPG)
+![Screen_1_c](./screens/Screen_1_c.JPG)
 **3**
 
 *Корневая файловая система монтируется в режиме Read-Only. Для перемонтирования ее в
@@ -34,21 +34,74 @@
 ```
 *Или же можно заменить в параметрах загрузки **ro** - *read only* на **rw** - *read-write*
 
-*Способы с **rd.break** и **rw init=/sysroot/bin/sh** в **Linux Mint** не работают
+*Способы с **rd.break** и **rw init=/sysroot/bin/sh** в **Linux Mint (Ubuntu)** не работают
 
-### Способ 2. systemd.unit=rescue.target
-В конце строки начинающейся с **linux** добавляем **systemd.unit=rescue.target** и нажимаем **сtrl-x** для
+### Способ 2. rd.break
+В конце строки начинающейся с **linux16** добавляем **rd.break** и нажимаем **сtrl-x** для
 загрузки в систему.
+Попадаем в **emergency mode**. Корневая файловая система смонтирована в режиме **Read-Only**. 
 
-![Screen 2.a](./screens/Screen_2_a.JPG)
+Для замены пароля администратора:
+```
+chroot /sysroot
+mount -o remount,rw /sysroot
+passwd root
+touch /.autorelabel
+```
+Перезагружаемся и заходим в систему с новым паролем. 
 
-![Screen 2.b](./screens/Screen_2_b.JPG)
+### Способ 3. rw init=/sysroot/bin/sh
+В строке начинающейся с **linux16** заменяем **ro** на **rw init=/sysroot/bin/sh** и нажимаем **сtrl-x**
+для загрузки в систему.
+Файловая система уже смонтирована в режим **Read-Write**
 
 
+## Установить систему с LVM, после чего переименовать VG
 
-### Способ 3. systemd.unit=emergency.target
-В конце строки начинающейся с **linux** добавляем **systemd.unit=emergency.target** и нажимаем **сtrl-x** для
-загрузки в систему.
+Cмотрим текущее состояние системы и переименовываем VG:
+
+![Screen_4_a](./screens/Screen_4_a.JPG)
+
+ 
+● Нас интересует втораā строка с именем Volume Group
+● Приступим к переименованиĀ:
+[root@otuslinux ~]# vgrename VolGroup00 OtusRoot
+Volume group "VolGroup00" successfully renamed to "OtusRoot"
+Установить систему с LVM, после чего переименовать VG
+● Далее правим [/etc/fstab](files/fstab), [/etc/default/grub](files/grub), [/boot/grub2/grub.cfg](files/grub.cfg) Везде заменāем старое
+название на новое. По ссýлкам можно увидетþ примерý получившихсā файлов.
+● Пересоздаем initrd image, чтобý он знал новое название Volume Group
+[root@otuslinux ~]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+...
+*** Creating image file done ***
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+● После чего можем перезагружатþсā и если все сделано правилþно успешно грузимсā с
+новýм именем Volume Group и проверāем:
+[root@otuslinux ~]# vgs
+ VG #PV #LV #SN Attr VSize VFree
+ OtusRoot 1 2 0 wz--n- <38.97g 0
+● При желании можно так же заменитþ название Logical Volume
+Добавить модуль в initrd
+Скриптý модулей хранāтсā в каталоге /usr/lib/dracut/modules.d/. Длā того чтобý
+добавитþ свой модулþ создаем там папку с именем 01test:
+[root@otuslinux ~]# mkdir /usr/lib/dracut/modules.d/01test
+В нее поместим два скрипта:
+1. module-setup.sh - которýй устанавливает модулþ и вýзýвает скрипт test.sh
+2. test.sh - собственно сам вýзýваемýй скрипт, в нём у нас рисуетсā пингвинчик
+Примерý файлов по ссýлкам.
+Добавить модуль в initrd
+● Пересобираем образ initrd
+[root@otuslinux ~]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+или
+[root@otuslinux ~]# dracut -f -v
+● Можно проверитþ/посмотретþ какие модули загруженý в образ:
+[root@otuslinux ~]# lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
+test
+● После чего можно пойти двумā путāми длā проверки:
+○ Перезагрузитþсā и руками вýклĀчитþ опции rghb и quiet и увидетþ вýвод
+○ Либо отредактироватþ grub.cfg убрав ÿти опции
+● В итоге при загрузке будет пауза на 10 секунд и вý увидите пингвина в вýводе
+терминала
 
 
 
