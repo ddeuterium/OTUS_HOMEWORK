@@ -14,11 +14,12 @@
 
 *При выборе ядра для загрузки нажимаем **"E"**, попадаем в окно, где можем менять параметры загрузки:*
 
-### Способ 1. init=/bin/sh
+### Способ 1. init=/bin/bash
 
- В конце строки начинающейся с **linux** добавляем **init=/bin/sh** или **init=/bin/bash**и нажимаем **сtrl-x** для
-загрузки в систему
+ В конце строки начинающейся с **linux16** добавляем **init=/bin/bash**и нажимаем **сtrl-x** для
+загрузки в систему.
 
+Видим, что /bin/bash имеет PID=1
 
 ![Screen_1_a](./screens/Screen_1_a.JPG)
 **1**
@@ -34,12 +35,16 @@
 ```
 *Или же можно заменить в параметрах загрузки **ro** - *read only* на **rw** - *read-write*
 
-*Способы с **rd.break** и **rw init=/sysroot/bin/sh** в **Linux Mint (Ubuntu)** не работают
 
 ### Способ 2. rd.break
 В конце строки начинающейся с **linux16** добавляем **rd.break** и нажимаем **сtrl-x** для
 загрузки в систему.
 Попадаем в **emergency mode**. Корневая файловая система смонтирована в режиме **Read-Only**. 
+
+![Screen_2_a](./screens/Screen_2_a.JPG)
+**1**
+![Screen_2_b](./screens/Screen_2_b.JPG)
+**2**
 
 Для замены пароля администратора:
 ```
@@ -48,6 +53,8 @@ mount -o remount,rw /sysroot
 passwd root
 touch /.autorelabel
 ```
+**.autorelabel** сообщает **SELinux** о том,чтл необходимо запустить в **initrd** процесса **restorecon**(восстановление контекста) при следующей перезагрузке.
+
 Перезагружаемся и заходим в систему с новым паролем. 
 
 ### Способ 3. rw init=/sysroot/bin/sh
@@ -55,6 +62,9 @@ touch /.autorelabel
 для загрузки в систему.
 Файловая система уже смонтирована в режим **Read-Write**
 
+![Screen_3_a](./screens/Screen_3_a.JPG)
+**1**
+![Screen_3_b](./screens/Screen_3_b.JPG)
 
 ## Установить систему с LVM, после чего переименовать VG
 
@@ -63,38 +73,56 @@ Cмотрим текущее состояние системы и переиме
 ![Screen_4_a](./screens/Screen_4_a.JPG)
 
 Правим [/etc/fstab](files/fstab), [/etc/default/grub](files/grub), [/boot/grub2/grub.cfg](files/grub.cfg) 
+
 Меняем название на новое. 
 Пересоздаем **initrd image**, чтобы он знал новое название Volume Group
 
 ![Screen_4_b](./screens/Screen_4_b.JPG)
 
-● После чего можем перезагружатþсā и если все сделано правилþно успешно грузимсā с
-новýм именем Volume Group и проверāем:
-[root@otuslinux ~]# vgs
- VG #PV #LV #SN Attr VSize VFree
- OtusRoot 1 2 0 wz--n- <38.97g 0
-● При желании можно так же заменитþ название Logical Volume
-Добавить модуль в initrd
-Скриптý модулей хранāтсā в каталоге /usr/lib/dracut/modules.d/. Длā того чтобý
-добавитþ свой модулþ создаем там папку с именем 01test:
-[root@otuslinux ~]# mkdir /usr/lib/dracut/modules.d/01test
-В нее поместим два скрипта:
-1. module-setup.sh - которýй устанавливает модулþ и вýзýвает скрипт test.sh
-2. test.sh - собственно сам вýзýваемýй скрипт, в нём у нас рисуетсā пингвинчик
-Примерý файлов по ссýлкам.
-Добавить модуль в initrd
-● Пересобираем образ initrd
-[root@otuslinux ~]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
-или
-[root@otuslinux ~]# dracut -f -v
-● Можно проверитþ/посмотретþ какие модули загруженý в образ:
-[root@otuslinux ~]# lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
-test
-● После чего можно пойти двумā путāми длā проверки:
-○ Перезагрузитþсā и руками вýклĀчитþ опции rghb и quiet и увидетþ вýвод
-○ Либо отредактироватþ grub.cfg убрав ÿти опции
-● В итоге при загрузке будет пауза на 10 секунд и вý увидите пингвина в вýводе
-терминала
 
 
+Перегружаемся и проверяем:
 
+![Screen_4_c](./screens/Screen_4_b.JPG)
+
+### 3. Добавляем модуль в initrd
+
+Создаем директорию для скриптов:
+```
+mkdir /usr/lib/dracut/modules.d/01test 
+cd /usr/lib/dracut/modules.d/01test
+```
+
+Скачиваем скрипты:
+```
+wget -O module-setup.sh https://gist.githubusercontent.com/lalbrekht/e51b2580b47bb5a150bd1a002f16ae85/raw/80060b7b300e193c187bbcda4d8fdf0e1c066af9/gistfile1.txt
+wget -O test.sh https://gist.githubusercontent.com/lalbrekht/ac45d7a6c6856baea348e64fac43faf0/raw/69598efd5c603df310097b52019dc979e2cb342d/gistfile1.txt
+```
+![Screen_5_a](./screens/Screen_5_a.JPG)
+
+Пересобираем образ **initrd**:
+
+```
+dracut -f -v
+```
+
+или так:
+
+```
+mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+```
+
+Проверяем
+
+```
+lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
+```
+![Screen_5_b](./screens/Screen_5_b.JPG)
+
+Перегружаемся и меняем параметры загрузки, убирая  **rghb** и **quiet**:
+
+![Screen_5_c](./screens/Screen_5_c.JPG)
+
+Результат:
+
+![Screen_5_d](./screens/Screen_5_d.JPG)
