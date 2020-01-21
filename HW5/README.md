@@ -26,9 +26,12 @@
    *Команда logger отправляет лог в системный журнал
    
    # Создадим юнит для сервиса 
+   
    [/etc/systemd/system/watchlog.service](./scripts/watchlog.service)
    
-   # Создадим юнит для таймера [/etc/systemd/system/watchlog.timer](./scripts/watchlog.timer)
+   # Создадим юнит для таймера 
+   
+   [/etc/systemd/system/watchlog.timer](./scripts/watchlog.timer)
    
    # Стартуем сервис, запускаем таймер и убеждаемся в результате:
    
