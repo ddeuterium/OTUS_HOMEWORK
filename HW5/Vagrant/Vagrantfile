@@ -1,0 +1,87 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+
+
+MACHINES = {
+  :otuslinuxhw5 => {
+        :box_name => "centos/7",
+        
+        :ip_addr => 'https://app.vagrantup.com/centos/boxes/7',
+
+		
+  }
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+      config.vm.synced_folder '.', '/vagrant', disabled: true
+      config.vm.define boxname do |box|
+
+          box.vm.box = boxconfig[:box_name]
+          box.vm.host_name = boxname.to_s
+
+          #box.vm.network "forwarded_port", guest: 3260, host: 3260+offset
+
+          box.vm.network "private_network", ip: boxconfig[:ip_addr]
+
+          box.vm.provider :virtualbox do |vb|
+            	  vb.customize ["modifyvm", :id, "--memory", "1024"]
+                  needsController = false
+                  if needsController == true
+                     vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
+                     boxconfig[:disks].each do |dname, dconf|
+                         vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', dconf[:port], '--device', 0, '--type', 'hdd', '--medium', dconf[:dfile]]
+                     end
+                  end
+          end
+ 	  box.vm.provision "shell", inline: <<-SHELL
+	      mkdir -p ~root/.ssh
+              cp ~vagrant/.ssh/auth* ~root/.ssh
+	      yum install -y mdadm smartmontools hdparm gdisk wget
+              #########################################
+	      #1.watchlog service & timer installation#
+	      #########################################
+	      wget https://raw.githubusercontent.com/Stump-D/hws_otuslinux/master/hw5/watchlog -O /etc/sysconfig/watchlog
+	      
+	      echo `date` > /var/log/watchlog.log
+	      echo 'ALERT' >> /var/log/watchlog.log
+      
+	      wget https://raw.githubusercontent.com/Stump-D/hws_otuslinux/master/hw5/watchlog.sh -O /opt/watchlog.sh
+	      chmod +x /opt/watchlog.sh
+	      
+	      wget https://raw.githubusercontent.com/Stump-D/hws_otuslinux/master/hw5/watchlog.service -O /etc/systemd/system/watchlog.service
+	      wget https://raw.githubusercontent.com/Stump-D/hws_otuslinux/master/hw5/watchlog.timer -O /etc/systemd/system/watchlog.timer
+	      	      
+	      systemctl enable watchlog.timer
+	      systemctl start watchlog.timer
+	      systemctl start watchlog.service
+	      ####################################
+	      #2. spawn-fcgi service installation#
+	      ####################################
+	      yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
+	      if [ -w /etc/sysconfig/spawn-fcgi ]; then sed -i '7,8 s/#//g' /etc/sysconfig/spawn-fcgi;fi
+	      wget https://raw.githubusercontent.com/Stump-D/hws_otuslinux/master/hw5/spawn-fcgi.service -O /etc/systemd/system/spawn-fcgi.service
+	      systemctl start spawn-fcgi
+	      
+	      ######################################
+	      #3. double httpd service installation#
+	      ######################################
+	      cp /usr/lib/systemd/system/httpd.service /etc/systemd/system/httpd@.service
+	      sed -i 's!EnvironmentFile=/etc/sysconfig/httpd!EnvironmentFile=/etc/sysconfig/httpd-%I!' /etc/systemd/system/httpd@.service
+	      cp /etc/sysconfig/httpd /etc/sysconfig/httpd-first
+	      cp /etc/sysconfig/httpd /etc/sysconfig/httpd-second
+	      sed -i 's!#OPTIONS=!OPTIONS=-f conf/first.conf!' /etc/sysconfig/httpd-first
+	      sed -i 's!#OPTIONS=!OPTIONS=-f conf/second.conf!' /etc/sysconfig/httpd-second
+	      cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/first.conf
+	      cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/second.conf
+	      sed -i 's!Listen 80!Listen 8080!' /etc/httpd/conf/second.conf
+	      echo 'PidFile	/var/run/httpd/httpd-second.pid' >> /etc/httpd/conf/second.conf
+	      systemctl start httpd@first
+	      systemctl start httpd@second
+	  SHELL
+
+      end
+  end
+end
