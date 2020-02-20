@@ -9,9 +9,11 @@
 
 ## **Ход выполнения:**
 
-### **1.Создать свой RPM пакет (nginx c поддержкой openssl)**
-**Установим необходимые пакеты**
-```bash
+### Создаем свой RPM пакет (возьмем пакет NGINX и соберем его с поддержкой openssl)
+
+#### Устанавливаем необходимые пакеты:
+
+```
 yum install -y \
 redhat-lsb-core \
 wget \
@@ -21,45 +23,55 @@ createrepo \
 yum-utils \
 gcc
 ```
-**- Загрузим SRPM пакет NGINX:**
+
+#### Загружаем SRPM пакет NGINX:
+
 ```
 wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm
 ```
-**- Установим SRC пакет. При установке такого пакета в домашней директории создается древо каталогов для сборки:**
+#### Установливаем SRC пакет (при установке такого пакета в домашней директории создается древо каталогов для сборки):
+
 ```
 rpm -i nginx-1.14.1-1.el7_4.ngx.src.rpm
 ```
-**- Скачиваем и разархивируем последний исходник для openssl:**
+
+
+#### Скачиваем и разархивируем последний исходник для openssl:
+
 ```
-wget https://www.openssl.org/source/latest.tar.gz
-tar -xvf latest.tar.gz
+wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+tar -xvf openssl-1.1.1d.tar.gz
 ```
-**- Cтавим все зависимости чтобы в процессе сборки не было ошибок:**
+
+#### Cтавим все зависимости чтобы в процессе сборки не было ошибок:
+
 ```
 yum-builddep rpmbuild/SPECS/nginx.spec
 ```
-**- Правим сам [spec](nginx.spec) файл чтобы NGINX собирался с необходимыми нам опциями:**
-```
---with-openssl=/root/openssl-1.1.1d
-```
-По этой [ссылке](https://nginx.org/ru/docs/configure.html) можно посмотреть все доступные опции для сборки.
 
-**- Собственно, запускаем процесс сборки самого пакета:**
+#### Правим [spec](./files/nginx.spec) файл чтобы NGINX собирался с необходимыми нам опциями:
+
+```
+--with-openssl=/home/den/openssl-1.1.1d
+```
+
+[Cсылка](https://nginx.org/ru/docs/configure.html), где можно посмотреть все доступные опции для сборки nginx.
+
+#### Запускаем процесс сборки самого пакета:
+
 ```
 rpmbuild -bb rpmbuild/SPECS/nginx.spec
 ```
-**- Проверяем результаты сборки:**
-```
-[root@otuslinuxhw7 ~]# sudo -s
-[root@otuslinuxhw7 ~]# ll ~/rpmbuild/RPMS/x86_64/
-total 4364
--rw-r--r--. 1 root root 1974420 дек  5 06:59 nginx-1.14.1-1.el7_4.ngx.x86_64.rpm
--rw-r--r--. 1 root root 2488224 дек  5 06:59 nginx-debuginfo-1.14.1-1.el7_4.ngx.x86_64.rpm
-```
+
+#### Проверяем результаты сборки:
+
+![Screen_1_a](./screens/Screen_1_a.JPG)
     
     
-### **2.Создать свой репо и разместить там свой RPM**    
-**- Устанавливаем nginx из собранного rpm в п.1**
+### **Создать свой репозиторий и разместить там ранее собранный RPM**    
+
+#### Устанавливаем nginx из ранее собранного rpm:
+
 ```
 yum localinstall -y rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm
 ```
