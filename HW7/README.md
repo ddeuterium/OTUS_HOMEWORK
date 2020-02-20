@@ -68,41 +68,32 @@ rpmbuild -bb rpmbuild/SPECS/nginx.spec
 ![Screen_1_a](./screens/Screen_1_a.JPG)
     
     
-### **Создать свой репозиторий и разместить там ранее собранный RPM**    
 
-#### Устанавливаем nginx из ранее собранного rpm:
+#### Устанавливаем nginx из ранее собранного rpm и убеждаемся, что он работает:
 
 ```
 yum localinstall -y rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm
 ```
-**- Стартуем nginx и проверяем:**
-```
-systemctl start nginx
-systemctl status nginx
-● nginx.service - nginx - high performance web server
-   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
-   Active: active (running) since Чт 2019-12-05 06:59:03 UTC; 8h ago
-     Docs: http://nginx.org/en/docs/
-  Process: 20989 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf (code=exited, status=0/SUCCESS)
- Main PID: 20990 (nginx)
-   CGroup: /system.slice/nginx.service
-           ├─20990 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
-           └─21000 nginx: worker process
 
-дек 05 06:59:03 otuslinuxhw7 systemd[1]: Starting nginx - high performance web server...
-дек 05 06:59:03 otuslinuxhw7 systemd[1]: PID file /var/run/nginx.pid not readable (yet?) after start.
-дек 05 06:59:03 otuslinuxhw7 systemd[1]: Started nginx - high performance web server.
-```
+![Screen_2_a](./screens/Screen_2_a.JPG)
 
-**- Создаем свой репозиторий и добавляем два пакета:**
+### **Создать свой репозиторий и разместить там ранее собранный RPM** 
+
+####  Приступим к созданию своего репозитория (директория для статики у NGINX по умолчанию /usr/share/nginx/html). Создадим там каталог repo и скопируем туда наш собранный RPM и, например, RPM для установки репозитория Percona-Server:
 
 ```
 mkdir /usr/share/nginx/html/repo
 cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
 wget http://www.percona.com/downloads/percona-release/redhat/0.1-6/percona-release-0.1-6.noarch.rpm \
 -O /usr/share/nginx/html/repo/percona-release-0.1-6.noarch.rpm
+```
+
+
+```
 createrepo /usr/share/nginx/html/repo/
 ```
+
+
 **- Для прозрачности настроим в NGINX доступ к листингу каталога:**
 В location / в файле [/etc/nginx/conf.d/default.conf](default.conf) добавим директиву autoindex on.
 В результате location будет выглядеть так:
