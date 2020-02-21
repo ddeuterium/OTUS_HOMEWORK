@@ -143,3 +143,7 @@ percona-release.noarch                      0.1-6                      otus-hw7
 #### Ставим percona-release из локального репозитория:
 
 ![Screen_5_a](./screens/Screen_5_a.JPG)
+
+
+*В случае необходимости обновить репозиторий (делается при каждом добавлении файлов), выполняем команду **createrepo
+/usr/share/nginx/html/repo/***
