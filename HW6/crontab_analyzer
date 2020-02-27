@@ -1,1 +1,1 @@
-01 * * * * cd /vagrant && /bin/bash /vagrant/access_log_analyzer.sh
+01 * * * * /bin/bash /vagrant/access_log_analyzer.sh 10 10
