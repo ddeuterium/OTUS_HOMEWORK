@@ -1,1 +1,1 @@
-01 * * * * /bin/bash /home/vagrant/access_log_analyzer.sh 10 10
+*/10 * * * * /bin/bash /home/vagrant/access_log_analyzer.sh 10 10
