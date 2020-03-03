@@ -1,0 +1,62 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+  :otuslinuxhw6 => {
+        :box_name => "centos/7",
+        
+        :ip_addr => '192.168.11.101',
+
+		
+  }
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+      config.vm.synced_folder '.', '/vagrant', disabled: true
+      config.vm.define boxname do |box|
+
+          box.vm.box = boxconfig[:box_name]
+          box.vm.host_name = boxname.to_s
+
+          #box.vm.network "forwarded_port", guest: 3260, host: 3260+offset
+
+          box.vm.network "private_network", ip: boxconfig[:ip_addr]
+
+          box.vm.provider :virtualbox do |vb|
+            	  vb.customize ["modifyvm", :id, "--memory", "1024"]
+                  needsController = false
+                  if needsController == true
+                     vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
+                     boxconfig[:disks].each do |dname, dconf|
+                         vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', dconf[:port], '--device', 0, '--type', 'hdd', '--medium', dconf[:dfile]]
+                     end
+                  end
+          end
+ 	  box.vm.provision "shell", inline: <<-SHELL
+	      mkdir -p ~root/.ssh
+              cp ~vagrant/.ssh/auth* ~root/.ssh
+
+	    yum install -y wget
+	    yum install -y mailx
+	    yum install -y bc
+	
+	    wget https://raw.githubusercontent.com/ddeuterium/OTUS_HOMEWORKs/master/HW6/access_log_analyzer.sh
+	    wget https://raw.githubusercontent.com/ddeuterium/OTUS_HOMEWORKs/master/HW6/crontab_analyzer	
+	    wget https://raw.githubusercontent.com/ddeuterium/OTUS_HOMEWORKs/master/HW6/crontabnew
+	       
+
+	    cd /tmp/
+	    wget https://raw.githubusercontent.com/ddeuterium/OTUS_HOMEWORKs/master/HW6/access.log
+
+	              
+	  	
+  	  crontab ~vagrant/crontabnew
+	  cp /var/spool/cron/root /var/spool/cron/vagrant
+	  rm -rf /var/spool/cron/root
+
+     	  SHELL
+      end
+  end
+end
