@@ -3,7 +3,7 @@
 
 data_acquisition(){
   pid=`cat $1/status | grep '^Pid' | awk '{print $2}'`
-  fd0=`readlink $1/fd/0 | grep -v null`
+  fd0=`readlink $1/fd/0 | grep -v null | sed -r 's/\/dev\///'`
   if [ -z "$fd0" ]
     then
       fd0="?"
