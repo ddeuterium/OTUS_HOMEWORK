@@ -12,3 +12,20 @@
 - Собранный образ необходимо запушить в docker hub и дать ссылку на ваш репозиторий.
 
 
+## **Выполнено:**
+
+### **Создайте свой кастомный образ nginx на базе alpine. После запуска nginx должен отдавать кастомную страницу**
+
+Создан [Dockerfile](./Dockerfile) на базе **alpine** c кастомными настройками и кастомной стартовой страничкой nginx. 
+Образ, собранный из [Dockerfile](./Dockerfile) выложен на DockerHub: [ddeuterium/nginx](https://hub.docker.com/repository/docker/ddeuterium/nginx) 
+
+Запускаем:
+
+```
+docker pull ddeuterium/nginx
+docker run -d -p 80:80 ddeuterium/nginx
+```
+
+![Screen_1](./screens/Screen_1.JPG)
+
+
