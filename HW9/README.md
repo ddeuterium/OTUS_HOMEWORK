@@ -22,7 +22,6 @@
 Запускаем:
 
 ```
-docker pull ddeuterium/nginx
 docker run -d -p 80:80 ddeuterium/nginx
 ```
 
