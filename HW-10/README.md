@@ -19,7 +19,7 @@
 
 - Для подключения к хостам нам необходимо будет передать множество параметров - это особенность Vagrant. Узнать эти параметры можно с помощью команды **vagrant ssh-config**
 
-![Screen1](./screens/Screen_1.JPG)
+![Screen1](./screens/Screen1.png)
 
 
 - Используя эти параметры создадим свой первый [inventory](./vagrant_ansible_inventory) файл
