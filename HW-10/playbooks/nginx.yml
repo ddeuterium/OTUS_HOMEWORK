@@ -1,45 +1,46 @@
-  GNU nano 2.3.1                                                          File: nginx.yml                                                                                                                          
-
 ---
-- name: NGINX | Install and configure NGINX
+- name: NGINX | Installing and configuring NGINX
   hosts: all
   become: true
   vars:
     nginx_listen_port: 8080
 
   tasks:
-    - name: NGINX | Install EPEL Repo package from standart repo
+    - name: NGINX | Installing EPEL Repo package
       yum:
-	name: epel-release
+        name: epel-release
         state: present
       tags:
-	- epel-package
+        - epel-package
         - packages
 
-    - name: NGINX | Install NGINX package from EPEL Repo
+    - name: NGINX | Installing NGINX package from EPEL Repo
       yum:
-	name: nginx
+        name: nginx
         state: latest
+      notify:
+        - restart nginx
       tags:
-	- nginx-package
+        - nginx-package
         - packages
 
-    - name: NGINX | Create NGINX config file from template
+    - name: NGINX | Creating NGINX config file from template
       template:
         src: templates/nginx.conf.j2
         dest: /etc/nginx/nginx.conf
+      notify:
+        - reload nginx
       tags:
-	- nginx-configuration
+        - nginx-configuration
 
   handlers:
     - name: restart nginx
       systemd:
-	name: nginx
+        name: nginx
         state: restarted
         enabled: yes
-
+    
     - name: reload nginx
       systemd:
-	name: nginx
+        name: nginx
         state: reloaded
-
