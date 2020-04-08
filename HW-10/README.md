@@ -40,7 +40,7 @@ ansible all -m yum -a "name=epel-release state=present" -b
 - Создадим [Playbook](./playbooks/nginx.yml) для установки NGINX на наши хосты, в котором пропишем необходимую нам переменную, чтобы NGINX слушал на порту 8080, а также модуль, который будет копировать шаблон [nginx.conf.j2](./nginx.conf.j2) на хост. Cоздадим **handler** и добавим **notify** к копированию шаблона для того, чтобы каждый раз, когда конфиг будет изменяться - сервис перезагружался.
 - Запускаем получившийся [Playbook](./playbooks/nginx.yml):
 
-![Screen3](./screens/Screen3.png)
+![Screen3](./screens/Screen3-1.png)
 
 
 - Проверяем доступность:
