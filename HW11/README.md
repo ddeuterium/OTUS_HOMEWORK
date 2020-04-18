@@ -9,16 +9,17 @@
 
 ##**Выолнено:**
 
-- Cоздадим двух пользователей:otus1, otus2:
+- Cоздадим двух пользователей:**otusadmin**, **otususer**. Пользователь **otusadmin** будет принадлежать группе **admin**:
 
 ```
-sudo useradd otus1; sudo useradd otus2
+sudo useradd otususer
+sudo useradd otusadmin && groupadd admin && usermod -a -G admin otusadmin
 ```
 
 - Назначим им пароли:
 
 ```
-echo "hw11"|sudo passwd --stdin otus1; echo "hw11"|sudo passwd --stdin otus2
+echo "hw11"|sudo passwd --stdin otusadmin; echo "hw11"|sudo passwd --stdin otususer
 ```
 
 - Для уверенности в том, что на нашем стенде разрешен вход через ssh по паролю выполним:
@@ -26,10 +27,19 @@ echo "hw11"|sudo passwd --stdin otus1; echo "hw11"|sudo passwd --stdin otus2
 ```
 sudo bash -c "sed -i 's/^PasswordAuthentication.*$/PasswordAuthentication yes/' /etc/ssh/sshd_config && systemctl restart sshd.service"
 ```
+- Добавим в **/etc/pam.d/login** следующие строки:
 
-- Краткое описание PAM:
+```
+account    [success=1 default=ignore] pam_succeed_if.so user ingroup admin
+account    required     pam_time.so
+```
 
-**PAM** (Pluggable Authentication Modules - подключаемые модули аутентификации)  -  это  набор  библиотек,  которые  позволяют интегрировать  различные  методы  аутентификации  в  виде  единого API, что позволяет предоставить единые механизмы для управления, встраивания прикладных программ в процесс аутентификации. PAM решает следующие задачи:Authentication - Аутентификация, идентификация, процесс подтверждения пользователем своей “подлинности”, ввод логина и пароля;Authorization - Авторизация, процесс наделения пользователя правами (предоставления доступа к каким-либо объектам);Accounting - Запись информации о произошедших событиях.Таким образом для решения задачи необходимо на первом или втором этапе применить необходимые нам проверки. Их можно реализвать несколькими способами. 
+А в **/etc/security/time.conf** запретим login в выходные дни:
+
+```
+login;*;*;Wk0000-2400
+```
+
 
 ![Screen1](./screens/Screen1.png)
 
