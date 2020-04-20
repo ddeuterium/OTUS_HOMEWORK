@@ -9,17 +9,17 @@
 
 ##**Выолнено:**
 
-- Cоздадим двух пользователей:**otusadmin**, **otususer**. Пользователь **otusadmin** будет принадлежать группе **admin**:
+- Cоздадим двух пользователей:**otusadmin**, **otususer**. Пользователь **otusadmin** будет принадлежать группе **admin_grp**:
 
 ```
 sudo useradd otususer
-sudo useradd otusadmin && groupadd admin && usermod -a -G admin otusadmin
+sudo useradd otusadmin && groupadd admin_grp && usermod -a -G admin-grp otusadmin
 ```
 
 - Назначим им пароли:
 
 ```
-echo "hw11"|sudo passwd --stdin otusadmin; echo "hw11"|sudo passwd --stdin otususer
+echo "1234"|sudo passwd --stdin otusadmin; echo "1234"|sudo passwd --stdin otususer
 ```
 
 - Для уверенности в том, что на нашем стенде разрешен вход через ssh по паролю выполним:
@@ -27,20 +27,18 @@ echo "hw11"|sudo passwd --stdin otusadmin; echo "hw11"|sudo passwd --stdin otusu
 ```
 sudo bash -c "sed -i 's/^PasswordAuthentication.*$/PasswordAuthentication yes/' /etc/ssh/sshd_config && systemctl restart sshd.service"
 ```
-- Добавим в **/etc/pam.d/login** следующие строки:
+- Добавим в **/etc/pam.d/login** строку "account required pam_time.so", выполнив:
 
 ```
-account    [success=1 default=ignore] pam_succeed_if.so user ingroup admin
-account    required     pam_time.so
-```
-
-А в **/etc/security/time.conf** запретим login в выходные дни:
+sudo sed -i '5i\account required pam_time.so' /etc/pam.d/login
 
 ```
-login;*;*;Wk0000-2400
+
+А в **/etc/security/time.conf** запретим login в выходные дни для всех кроме пользователей, принадлежащих к **admin_grp**, добавив строку:
+
+```
+login ; * ; !adm_group ; Wd
 ```
 
-
-![Screen1](./screens/Screen1.png)
-
+Теперь закинем все в [Vagrantfile](./Vagrantfile)
 
