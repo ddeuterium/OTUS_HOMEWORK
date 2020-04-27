@@ -41,7 +41,7 @@ EOF
         #  make sure .conf files are in same directory as Vagrantfile
         mkdir -p /etc/bacula/examples/
         cp /etc/bacula/*.conf /etc/bacula/examples/
-        cp *.conf /etc/bacula/
+        cp /vagrant/*.conf /etc/bacula/
         chown -R root:root /etc/bacula
         chmod 755 /etc/bacula
         chmod 640 /etc/bacula/*
@@ -93,7 +93,7 @@ EOF
         #  make sure .conf files are in same directory as Vagrantfile
         mkdir -p /etc/bacula/examples/
         cp /etc/bacula/bacula-fd.conf /etc/bacula/examples/
-        cp bacula-fd.client1_conf /etc/bacula/bacula-fd.conf
+        cp /vagrant/bacula-fd.client1_conf /etc/bacula/bacula-fd.conf
         sed -i "s/@@FD_PASSWORD@@/N2I3NzNmYTg3YzMwOWMzN2NhOTljNmMzY/" /etc/bacula/bacula-fd.conf
         mkdir -p /bacula/restore
         chown -R bacula:bacula /bacula
@@ -122,7 +122,7 @@ EOF
         #  make sure .conf files are in same directory as Vagrantfile
         mkdir -p /etc/bacula/examples/
         cp /etc/bacula/bacula-fd.conf /etc/bacula/examples/
-        cp bacula-fd.client2_conf /etc/bacula/bacula-fd.conf
+        cp /vagrant/bacula-fd.client2_conf /etc/bacula/bacula-fd.conf
         sed -i "s/@@FD_PASSWORD@@/N2I3NzNmYTg3YzMwOWMzN2NhOTljNmMzY/" /etc/bacula/bacula-fd.conf
         mkdir -p /bacula/restore
         chown -R bacula:bacula /bacula
