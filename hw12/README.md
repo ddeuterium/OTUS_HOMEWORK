@@ -30,7 +30,7 @@
 
 
 **list jobs**
-![list jobs](./screens/Screen_2.png)
+![list jobs](./screens/Screen_2-1.png)
 
 
 
