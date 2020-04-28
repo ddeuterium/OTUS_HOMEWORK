@@ -11,7 +11,7 @@
 2) Инкрементальный - каждые 10 минут
 3) Дифференциальный - каждые 30 минут
 
-Запустить систему на два часа. Для сдачи ДЗ приложить list jobs, list files jobid=<id>
+Запустить систему на два часа. Для сдачи ДЗ приложить list jobs, list files jobid=id
 и сами конфиги bacula-*
 
 
@@ -31,7 +31,7 @@
 [list jobs](./screens/Screen_2)
 
 
-[list files jobid=<id>](./screens/Screen_3)
+[list files jobid=id](./screens/Screen_3)
 
 Материалы для выполнения ДЗ:
 
