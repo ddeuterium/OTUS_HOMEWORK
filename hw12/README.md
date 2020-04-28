@@ -19,7 +19,19 @@
 
 ## **Выолнено:**
 
--  
+-  Запускаем [Vagrantfile](./Vagrantfile)
+
+-  Зазодим на **server**
+
+-  В консоли сервера выполняем:
+
+[bconsole](./screens/Screen_1)
+
+
+[list jobs](./screens/Screen_2)
+
+
+[list files jobid=<id>](./screens/Screen_3)
 
 Материалы для выполнения ДЗ:
 
@@ -28,8 +40,4 @@
 [Bacula_configuration_video_1](https://www.youtube.com/watch?v=yNqRukupEXA)
 
 [Bacula_configuration_video_2](https://www.youtube.com/watch?v=xbWB-bmT53Q&t=345s)
-```
-
-```
-[Vagrantfile](./Vagrantfile)
 
