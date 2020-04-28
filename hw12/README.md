@@ -33,6 +33,10 @@
 
 [list files jobid=id](./screens/Screen_3)
 
+
+[list files jobid=id](./screens/Screen_4)
+
+
 Материалы для выполнения ДЗ:
 
 [bacula-vagrant](https://github.com/haf/vagrant-bacula)
