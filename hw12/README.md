@@ -25,15 +25,17 @@
 
 -  В консоли сервера выполняем:
 
+**bconsole**
 ![bconsole](./screens/Screen_1.png)
 
 
+**list jobs**
 ![list jobs](./screens/Screen_2.png)
 
-
+**list files jobid=< id >**
 ![list files jobid=id](./screens/Screen_3.png)
 
-
+**list files jobid=< id>**
 ![list files jobid=id](./screens/Screen_4.png)
 
 
