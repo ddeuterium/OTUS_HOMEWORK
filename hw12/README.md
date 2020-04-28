@@ -1,4 +1,4 @@
-# **Домашнее задание №12: **
+# **Домашнее задание №12: Резервное копирование **
 
 
 
@@ -40,6 +40,8 @@
 Материалы для выполнения ДЗ:
 
 [bacula-vagrant](https://github.com/haf/vagrant-bacula)
+
+[Развертывание Bacula в малом офисе](https://antiskleroz.pp.ua/it/bacula)
 
 [Bacula_configuration_video_1](https://www.youtube.com/watch?v=yNqRukupEXA)
 
