@@ -24,7 +24,9 @@
 Материалы для выполнения ДЗ:
 
 [bacula-vagrant](https://github.com/haf/vagrant-bacula)
+
 [Bacula_configuration_video_1](https://www.youtube.com/watch?v=yNqRukupEXA)
+
 [Bacula_configuration_video_2](https://www.youtube.com/watch?v=xbWB-bmT53Q&t=345s)
 ```
 
