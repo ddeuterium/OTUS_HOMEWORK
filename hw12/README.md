@@ -25,16 +25,16 @@
 
 -  В консоли сервера выполняем:
 
-[bconsole](./screens/Screen_1.png)
+![bconsole](./screens/Screen_1.png)
 
 
-[list jobs](./screens/Screen_2.png)
+![list jobs](./screens/Screen_2.png)
 
 
-[list files jobid=id](./screens/Screen_3.png)
+![list files jobid=id](./screens/Screen_3.png)
 
 
-[list files jobid=id](./screens/Screen_4.png)
+![list files jobid=id](./screens/Screen_4.png)
 
 
 Материалы для выполнения ДЗ:
